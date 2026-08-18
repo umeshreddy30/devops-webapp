@@ -53,3 +53,23 @@ jobs:
           echo "Build Status: SUCCESS"
           echo "Files checked: index.html, style.css, script.js"
           echo "Deployment-ready build generated."
+
+      - name: Send Slack success notification
+        if: success()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -X POST \
+          -H 'Content-type: application/json' \
+          --data '{"text":"✅ CI/CD Pipeline SUCCESS for DevOps WebApp"}' \
+          "$SLACK_WEBHOOK_URL"
+
+      - name: Send Slack failure notification
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -X POST \
+          -H 'Content-type: application/json' \
+          --data '{"text":"❌ CI/CD Pipeline FAILED for DevOps WebApp"}' \
+          "$SLACK_WEBHOOK_URL"
